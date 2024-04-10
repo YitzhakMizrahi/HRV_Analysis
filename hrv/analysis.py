@@ -9,7 +9,7 @@ def detect_r_peaks(ecg_data):
     :return: Array of indices where R-peaks are detected.
     """
     # Assuming a minimum distance between peaks to avoid false positives
-    peaks, _ = signal.find_peaks(ecg_data, distance=50)
+    peaks, _ = signal.find_peaks(ecg_data, distance=200)
     return peaks
 
 
