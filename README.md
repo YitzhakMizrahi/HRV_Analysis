@@ -57,3 +57,7 @@ HRV_Analysis/
 
 - Data quality: Ensure ECG data is clean and accurately reflects heart activity.
 - Algorithm accuracy: R-peak detection and HRV calculations must be precise and validated.
+
+## License
+
+This project is currently unlicensed and all rights are reserved by the author. A formal license will be added in the future as the project evolves.
