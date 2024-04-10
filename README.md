@@ -9,7 +9,7 @@
 - ECG data loading from text files
 - R-peak detection in ECG data
 - Calculation of RR intervals
-- HRV metrics computation, starting with RMSSD
+- HRV metrics computation, starting with RMSSD, SDNN, pNN50
 
 ## Installation
 
