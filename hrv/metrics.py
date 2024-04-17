@@ -25,7 +25,7 @@ def calculate_sdnn(rr_intervals):
     """
     if len(rr_intervals) < 2:
         raise ValueError("At least two RR intervals are required to calculate SDNN.")
-    return np.std(rr_intervals, ddof=1)
+    return np.std(rr_intervals, ddof=0)
 
 
 def calculate_pnn50(rr_intervals):
