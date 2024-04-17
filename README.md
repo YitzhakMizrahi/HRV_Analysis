@@ -14,11 +14,15 @@
 ## Installation
 
 1. Clone the project repository.
-2. Activate the virtual environment
+2. Create the virtual Environment
+```
+python -m venv venv
+```
+3. Activate the virtual environment
 ```
 .\venv\Scripts\activate
 ```
-3. Install required dependencies:
+4. Install required dependencies:
 ```
 pip install -r requirements.txt
 ```
