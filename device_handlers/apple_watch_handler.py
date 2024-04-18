@@ -46,7 +46,6 @@ def test_apple_watch_data():
                     75,
                     76,
                     78,
-                    
                 ]
             ),
             33,
@@ -131,7 +130,6 @@ def test_apple_watch_data():
                     82,
                     79,
                     79,
-                  
                 ]
             ),
             20,
