@@ -1,39 +1,70 @@
+import argparse
 import sys
+import os
+from device_handlers import apple_watch_handler, eco_handler
+from data_processing.process_segments import process_segments
 from hrv.reader import load_ecg_data
-from hrv.analysis import detect_r_peaks, calculate_rr_intervals
-from hrv.metrics import calculate_hrv, calculate_sdnn, calculate_pnn50
 
 
 def main():
-    # Path to your ECG data file
-    file_path = "data/EST2019201904_2020-03-17_15-22-25.txt"
+    parser = argparse.ArgumentParser(
+        description="Process different types of ECG data with dynamic file paths."
+    )
+    parser.add_argument(
+        "type",
+        type=str,
+        choices=["standard", "apple_watch", "eco"],
+        help="Type of analysis to perform: standard, apple_watch, or eco",
+    )
+    parser.add_argument(
+        "file_path",
+        type=str,
+        nargs="?",
+        help="Path to the data file. Required for standard and eco types.",
+    )
 
-    try:
-        # Load the ECG data from the file
-        ecg_data = load_ecg_data(file_path)
-        if not ecg_data:
-            print("Error: ECG data is empty.")
+    args = parser.parse_args()
+
+    if args.type in ["standard", "eco"]:
+        if not args.file_path:
+            print(
+                "Error: A file path must be specified for standard and eco data types."
+            )
             sys.exit(1)
 
-        # Detect R-peaks in the ECG data
-        r_peaks = detect_r_peaks(ecg_data)
+        file_name = os.path.basename(args.file_path)
 
-        # Calculate RR intervals from the R-peaks
-        rr_intervals = calculate_rr_intervals(r_peaks)
+        try:
+            if args.type == "standard":
+                ecg_data = load_ecg_data(args.file_path)
+                if not ecg_data:
+                    print("Error: ECG data is empty.")
+                    sys.exit(1)
+                process_segments(
+                    ecg_data, 200, file_name
+                )  # Use the appropriate sampling rate
+            elif args.type == "eco":
+                eco_handler.process_eco_data(
+                    args.file_path, file_name
+                )  # Process ECO data
 
-        # Compute HRV metrics
-        rmssd = calculate_hrv(rr_intervals)
-        sdnn = calculate_sdnn(rr_intervals)
-        pnn50 = calculate_pnn50(rr_intervals)
+        except FileNotFoundError as e:
+            print(f"File not found: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error processing {args.type} data: {e}")
+            sys.exit(1)
 
-        # Print the HRV results
-        print(f"HRV (RMSSD): {rmssd}")
-        print(f"HRV (SDNN): {sdnn}")
-        print(f"HRV (pNN50): {pnn50}")
-
-    except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    elif args.type == "apple_watch":
+        if args.file_path:
+            print(
+                "Warning: No file path needed for Apple Watch data. Ignoring file path argument."
+            )
+        try:
+            apple_watch_handler.test_apple_watch_data()
+        except Exception as e:
+            print(f"Error processing Apple Watch data: {e}")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
