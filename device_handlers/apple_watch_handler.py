@@ -1,3 +1,5 @@
+# device_handlers/apple_watch_handler.py
+
 import numpy as np
 from hrv.metrics import (
     calculate_hrv,

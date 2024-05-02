@@ -1,7 +1,9 @@
+# main.py
+
 import argparse
 import sys
 import os
-from device_handlers import apple_watch_handler, eco_handler
+from device_handlers import apple_watch_handler, eco_handler, ppg_handler
 from data_processing.process_segments import process_segments
 from hrv.reader import load_ecg_data
 
@@ -13,22 +15,22 @@ def main():
     parser.add_argument(
         "type",
         type=str,
-        choices=["standard", "apple_watch", "eco"],
-        help="Type of analysis to perform: standard, apple_watch, or eco",
+        choices=["standard", "apple_watch", "eco", "ppg"],
+        help="Type of analysis to perform: standard, apple_watch, eco, or ppg",
     )
     parser.add_argument(
         "file_path",
         type=str,
         nargs="?",
-        help="Path to the data file. Required for standard and eco types.",
+        help="Path to the data file. Required for standard, eco, and ppg types.",
     )
 
     args = parser.parse_args()
 
-    if args.type in ["standard", "eco"]:
+    if args.type in ["standard", "eco", "ppg"]:
         if not args.file_path:
             print(
-                "Error: A file path must be specified for standard and eco data types."
+                "Error: A file path must be specified for standard, eco, and ppg data types."
             )
             sys.exit(1)
 
@@ -37,20 +39,13 @@ def main():
         try:
             if args.type == "standard":
                 ecg_data = load_ecg_data(args.file_path)
-                if not ecg_data:
-                    print("Error: ECG data is empty.")
-                    sys.exit(1)
-                process_segments(
-                    ecg_data, 200, file_name
-                )  # Use the appropriate sampling rate
+                process_segments(ecg_data, 200, file_name)
             elif args.type == "eco":
-                eco_handler.process_eco_data(
+                eco_handler.process_eco_data(args.file_path, file_name)
+            elif args.type == "ppg":
+                ppg_handler.process_ppg_data(
                     args.file_path, file_name
-                )  # Process ECO data
-
-        except FileNotFoundError as e:
-            print(f"File not found: {e}")
-            sys.exit(1)
+                )  # Use PPG handler
         except Exception as e:
             print(f"Error processing {args.type} data: {e}")
             sys.exit(1)

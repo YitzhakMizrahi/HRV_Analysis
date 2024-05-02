@@ -1,3 +1,5 @@
+# hrv/reader.py
+
 def load_ecg_data(file_path):
     """
     Load ECG data from a specified file path.
@@ -38,3 +40,24 @@ def load_eco_data(file_path, channel_index=3):
         raise FileNotFoundError(f"File {file_path} not found.")
     except ValueError as e:
         raise ValueError(f"Error processing ECO data in {file_path}: {e}")
+
+
+def load_ppg_data(file_path):
+    """
+    Load PPG data from a specified file path and extract each channel.
+
+    Parameters:
+        file_path (str): Path to the file containing PPG data.
+
+    Returns:
+        dict: Dictionary containing lists of data points for each channel.
+    """
+    with open(file_path, "r") as file:
+        data = file.read().split(",")
+    # Assuming data is ordered as Red, IR, Green, ECG repeated
+    return {
+        "red": [float(data[i]) for i in range(0, len(data), 4)],
+        "ir": [float(data[i]) for i in range(1, len(data), 4)],
+        "green": [float(data[i]) for i in range(2, len(data), 4)],
+        "ecg": [float(data[i]) for i in range(3, len(data), 4)],
+    }

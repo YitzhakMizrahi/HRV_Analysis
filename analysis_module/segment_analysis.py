@@ -1,3 +1,5 @@
+# analysis_module/segment_analysis.py
+
 from hrv.analysis import detect_r_peaks, calculate_rr_intervals
 from hrv.metrics import calculate_sdnn
 
